@@ -12,8 +12,8 @@ describe('todomvc application', () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      // headless: false,
-      slowMo: 50,
+      headless: false,
+      slowMo: 100,
       // executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
     })
     // console.log(puppeteer.defaultArgs())
@@ -36,22 +36,42 @@ describe('todomvc application', () => {
     await page.close()
   })
 
-  for(var i = 0; i< 3; i++){
+  // for(var i = 0; i< 3; i++){
   it('should display a todo after it was added', async () => {
+    page.wait
+    
     // act
-    po.addTodo('kup piwo!')
+    await po.addTodo('kup piwo!')
 
     // assert
-    let items
-    items = await page.$$eval('.todo-list .view', todoItems => todoItems.length)
+    let items = await po.visibleTodosCount()
     expect(items).toEqual(1)
 
-    let phrase = "kup piwo"
-    await page.$$eval('.todo-list .view',
-      (items, phrase) => Array.from(items)
-        .find(node => node.innerText.includes(phrase)),
-      phrase
-    )
+    let includes = await po.todoWithLabelIsDisplayed("kup piwo")
+    expect(includes).toBeTruthy()
   })
-  }
+  // }
+
+  it('should display filtered todos', async () => {
+    // act
+    const todos = [
+      'kup piwo',
+      'wyrzuć śmieci', // [X]
+      'pozmywaj',
+      'skręć meble', // [X]
+      'ogarnij się'
+    ]
+    for (let todo of todos){
+      await po.addTodo(todo)
+    }
+
+    // assert
+    let items = await po.visibleTodosCount()
+    expect(items).toEqual(5)
+
+    await po.setTodoCompleted(1)
+
+    await po.setTodoCompleted(3)
+    
+  }, 100000)
 })
