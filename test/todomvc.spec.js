@@ -1,12 +1,14 @@
 const puppeteer = require('puppeteer')
 const chalk = require('chalk')
 const assert = require('assert')
+const { TodomvcPO } = require('./po/todomvc.po')
+
 
 const { sleep } = require('./utils')
 const URL = 'http://todomvc.com/examples/jquery/'
 
 describe('todomvc application', () => {
-  let browser, page
+  let browser, page, po
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
@@ -22,7 +24,8 @@ describe('todomvc application', () => {
   })
 
   beforeEach(async () => {  
-    page = await browser.newPage() 
+    page = await browser.newPage()
+    po = TodomvcPO(page)
     await page.goto(URL, { waitUntil: 'networkidle2' })
   }, 100000)
 
@@ -36,10 +39,7 @@ describe('todomvc application', () => {
   for(var i = 0; i< 3; i++){
   it('should display a todo after it was added', async () => {
     // act
-    await page.click('.new-todo')
-    await page.keyboard.type(`kup piwo!`)
-    await page.keyboard.up('\n')
-
+    po.addTodo('kup piwo!')
 
     // assert
     let items
