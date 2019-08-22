@@ -20,7 +20,7 @@ describe('todomvc application', () => {
     page = await browser.newPage()
     await page.goto(URL, { waitUntil: 'networkidle2' })
     console.log(browser == undefined)
-  })
+  }, 100000)
 
   afterEach(async () => {
     console.log(browser == undefined)
