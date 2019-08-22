@@ -8,32 +8,38 @@ const URL = 'http://todomvc.com/examples/jquery/'
 describe('todomvc application', () => {
   let browser, page
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
+      // headless: false,
       slowMo: 50,
       // executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
     })
-  
     // console.log(puppeteer.defaultArgs())
-  
-    page = await browser.newPage()
-    await page.goto(URL, { waitUntil: 'networkidle2' })
-    console.log(browser == undefined)
-  }, 100000)
+  })
 
-  afterEach(async () => {
-    console.log(browser == undefined)
+  afterAll(async () => {
     await browser.close()
   })
 
-  it('should display a todo after it was added', async () => {
-    console.log(browser == undefined)
+  beforeEach(async () => {  
+    page = await browser.newPage() 
+    await page.goto(URL, { waitUntil: 'networkidle2' })
+  }, 100000)
 
+  afterEach(async () => {
+    await page.evaluate(() => {
+      localStorage.removeItem('todos-jquery')
+    })
+    await page.close()
+  })
+
+  for(var i = 0; i< 3; i++){
+  it('should display a todo after it was added', async () => {
     // act
     await page.click('.new-todo')
     await page.keyboard.type(`kup piwo!`)
     await page.keyboard.up('\n')
+
 
     // assert
     let items
@@ -47,4 +53,5 @@ describe('todomvc application', () => {
       phrase
     )
   })
+  }
 })
