@@ -11,20 +11,25 @@ describe('todomvc application', () => {
   beforeEach(async () => {
     browser = await puppeteer.launch({
       headless: false,
-      // slowMo: 100,
+      slowMo: 50,
+      // executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
     })
   
     // console.log(puppeteer.defaultArgs())
   
     page = await browser.newPage()
     await page.goto(URL, { waitUntil: 'networkidle2' })
+    console.log(browser == undefined)
   })
 
   afterEach(async () => {
+    console.log(browser == undefined)
     await browser.close()
   })
 
   it('should display a todo after it was added', async () => {
+    console.log(browser == undefined)
+
     // act
     await page.click('.new-todo')
     await page.keyboard.type(`kup piwo!`)
